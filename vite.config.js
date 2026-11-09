@@ -1,0 +1,36 @@
+import { fileURLToPath, URL } from 'node:url';
+import { defineConfig } from 'vite';
+import laravel from 'laravel-vite-plugin';
+import vue from '@vitejs/plugin-vue';
+import tailwindcss from '@tailwindcss/vite';
+
+export default defineConfig({
+    plugins: [
+        laravel({
+            input: ['resources/css/app.css', 'resources/js/app.js'],
+            refresh: false,
+            detectTls: false,
+        }),
+        vue(),
+        tailwindcss(),
+    ],
+    resolve: {
+        alias: {
+            '@': fileURLToPath(new URL('./resources/js', import.meta.url)),
+        },
+    },
+    server: {
+        host: 'localhost',
+        watch: {
+            ignored: [
+                '**/storage/**',
+                '**/vendor/**',
+                '**/database/**',
+                '**/bootstrap/cache/**',
+                '**/public/build/**',
+                '**/.git/**',
+                '**/*.log',
+            ],
+        },
+    },
+});
