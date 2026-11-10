@@ -48,7 +48,6 @@ watch(
                     role="dialog"
                     aria-modal="true"
                 >
-                    <!-- Modal Header -->
                     <div class="flex items-center justify-between border-b border-slate-200 px-6 py-4">
                         <h2 class="font-mono text-xs font-bold uppercase tracking-wider text-slate-800">
                             {{ title }}
@@ -64,8 +63,6 @@ watch(
                             </svg>
                         </button>
                     </div>
-
-                    <!-- Modal Body Content -->
                     <div class="p-6">
                         <slot />
                     </div>

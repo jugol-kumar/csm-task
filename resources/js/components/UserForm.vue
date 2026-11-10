@@ -70,7 +70,6 @@ async function submit() {
 
 <template>
     <form class="space-y-5" @submit.prevent="submit">
-        <!-- Role Selector -->
         <FormField label="User Role" :error="err('role')">
             <div class="grid grid-cols-3 gap-2">
                 <label
@@ -87,7 +86,6 @@ async function submit() {
             </div>
         </FormField>
 
-        <!-- Full Name Field -->
         <FormField label="Full name" :error="err('name')">
             <input
                 v-model="form.name"
@@ -98,7 +96,6 @@ async function submit() {
             />
         </FormField>
 
-        <!-- Email Field -->
         <FormField label="Email address" :error="err('email')">
             <input
                 v-model="form.email"
@@ -109,7 +106,6 @@ async function submit() {
             />
         </FormField>
 
-        <!-- Password Field -->
         <FormField
             label="Password"
             :error="err('password')"
@@ -125,7 +121,6 @@ async function submit() {
             />
         </FormField>
 
-        <!-- OWNER SPECIFIC STORE ASSIGNMENT OR CREATION -->
         <div v-if="form.role === 'owner'" class="space-y-4 rounded-2xl border border-slate-200 bg-slate-50/70 p-4 shadow-sm">
             <div class="flex items-center justify-between">
                 <span class="font-mono text-xs font-bold uppercase tracking-wider text-slate-700">Shop Assignment</span>
@@ -135,7 +130,6 @@ async function submit() {
                 </label>
             </div>
 
-            <!-- Existing Shop Selector -->
             <FormField v-if="!form.create_new_store" label="Assigned shop" :error="err('shop_id')">
                 <div class="relative">
                     <select
@@ -153,7 +147,6 @@ async function submit() {
                 </div>
             </FormField>
 
-            <!-- Inline New Store Creation Fields -->
             <div v-else class="space-y-3 pt-1">
                 <FormField label="New Store Name" :error="err('new_store.name')">
                     <input
@@ -179,7 +172,6 @@ async function submit() {
             </div>
         </div>
 
-        <!-- Action Buttons Footer -->
         <div class="flex items-center justify-end gap-3 border-t border-slate-200 pt-4">
             <button
                 type="button"

@@ -65,7 +65,6 @@ async function submit() {
 <template>
     <form class="space-y-5" @submit.prevent="submit">
 
-        <!-- Step Indicator Progress Bar -->
         <div class="mb-6 flex items-center justify-between border-b border-slate-200 pb-4">
             <div class="flex items-center gap-3">
                 <span :class="currentStep === 1 ? 'bg-orange-500 text-white' : 'bg-slate-100 text-slate-700'" class="flex h-7 w-7 items-center justify-center rounded-full font-mono text-xs font-bold">

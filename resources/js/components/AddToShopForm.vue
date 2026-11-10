@@ -34,7 +34,6 @@ async function submit() {
 
 <template>
     <form class="space-y-5" @submit.prevent="submit">
-        <!-- Product Catalog Info Box -->
         <div class="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm shadow-sm flex items-center justify-between gap-4">
             <div>
                 <p class="font-semibold text-slate-900">{{ product.name }}</p>
@@ -49,7 +48,6 @@ async function submit() {
             </div>
         </div>
 
-        <!-- Price Field -->
         <FormField label="Your price" :error="err('price')">
             <div class="relative">
                 <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400 font-mono text-sm">$</div>
@@ -64,7 +62,6 @@ async function submit() {
             </div>
         </FormField>
 
-        <!-- Shop Title Field -->
         <FormField label="Shop title" :error="err('title')" hint="Optional. Overrides the catalog name in your shop only.">
             <input
                 v-model="form.title"
@@ -74,7 +71,6 @@ async function submit() {
             />
         </FormField>
 
-        <!-- Shop Description Field -->
         <FormField label="Shop description" :error="err('description')" hint="Optional.">
             <textarea
                 v-model="form.description"
@@ -84,7 +80,6 @@ async function submit() {
             ></textarea>
         </FormField>
 
-        <!-- Image Picker Component -->
         <ImagePicker
             v-model="form.thumbnail"
             v-model:remove="form.remove_thumbnail"
@@ -94,12 +89,10 @@ async function submit() {
             :error="err('thumbnail')"
         />
 
-        <!-- General Error Display -->
         <div v-if="err('product_id')" class="text-xs font-medium text-rose-500">
             {{ err('product_id') }}
         </div>
 
-        <!-- Action Buttons Footer -->
         <div class="flex items-center justify-end gap-3 border-t border-slate-200 pt-4">
             <button
                 type="button"

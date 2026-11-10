@@ -35,7 +35,6 @@ async function submit() {
 
 <template>
     <form class="space-y-4" @submit.prevent="submit">
-        <!-- Product Name -->
         <FormField label="Product name" :error="err('name')">
             <input
                 v-model="form.name"
@@ -46,7 +45,6 @@ async function submit() {
             />
         </FormField>
 
-        <!-- Base Price -->
         <FormField label="Base price" :error="err('base_price')" hint="Shops start from this price and can change it for themselves.">
             <input
                 v-model="form.base_price"
@@ -59,7 +57,6 @@ async function submit() {
             />
         </FormField>
 
-        <!-- Description -->
         <FormField label="Description" :error="err('description')">
             <textarea
                 v-model="form.description"
@@ -69,7 +66,6 @@ async function submit() {
             ></textarea>
         </FormField>
 
-        <!-- Image Picker -->
         <div class="pt-1">
             <ImagePicker
                 v-model="form.thumbnail"
@@ -80,7 +76,6 @@ async function submit() {
             />
         </div>
 
-        <!-- Action Buttons -->
         <div class="flex items-center justify-end gap-3 border-t border-slate-200 pt-4">
             <button
                 type="button"

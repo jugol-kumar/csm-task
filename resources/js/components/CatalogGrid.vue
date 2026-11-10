@@ -37,7 +37,6 @@ const emit = defineEmits(['add', 'edit', 'remove', 'detach']);
             </div>
 
             <div class="mt-4 flex flex-wrap items-center gap-2 border-t border-slate-100 pt-3">
-                <!-- If already listed/attached, show Detach Button -->
                 <button
                     v-if="product.is_listed"
                     type="button"
@@ -60,7 +59,6 @@ const emit = defineEmits(['add', 'edit', 'remove', 'detach']);
                     Add to shop
                 </button>
 
-                <!-- Owner Actions (Edit / Delete) -->
                 <template v-if="product.is_mine">
                     <button
                         type="button"

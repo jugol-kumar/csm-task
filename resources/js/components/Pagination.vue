@@ -5,14 +5,11 @@ const emit = defineEmits(['change']);
 
 <template>
     <div v-if="meta && meta.last_page > 1" class="mt-6 flex flex-wrap items-center justify-between gap-4 border-t border-slate-200 pt-4 font-mono text-xs">
-        <!-- Pagination Info -->
         <span class="text-slate-500">
             Page <span class="font-semibold text-slate-700">{{ meta.current_page }}</span> of <span class="font-semibold text-slate-700">{{ meta.last_page }}</span>
             <span class="mx-1 text-slate-300">·</span>
             <span class="text-slate-400">{{ meta.total }} total</span>
         </span>
-
-        <!-- Pagination Action Buttons -->
         <div class="flex items-center gap-2">
             <button
                 type="button"

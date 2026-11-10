@@ -10,7 +10,6 @@ defineProps({ modules: { type: Array, required: true } });
             :to="module.to"
             class="group relative flex min-h-[190px] flex-col justify-between overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-orange-300 hover:shadow-md"
         >
-            <!-- Top: Module Number & Arrow Icon -->
             <div class="flex items-start justify-between">
                 <span class="font-mono text-xs font-semibold text-amber-600 bg-amber-50 px-2.5 py-1 rounded-md border border-amber-200">
                     {{ module.no }}
@@ -20,7 +19,6 @@ defineProps({ modules: { type: Array, required: true } });
                 </span>
             </div>
 
-            <!-- Bottom: Title & Description -->
             <div>
                 <h3 class="text-xl font-bold tracking-tight text-slate-900 transition-colors group-hover:bg-gradient-to-r group-hover:from-amber-500 group-hover:to-orange-600 group-hover:bg-clip-text group-hover:text-transparent">
                     {{ module.title }}
