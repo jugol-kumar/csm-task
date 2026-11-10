@@ -24,12 +24,10 @@ onMounted(async () => {
 
 <template>
     <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        <!-- Loading State -->
         <div v-if="loading" class="py-24 text-center font-mono text-xs text-slate-400">
             Loading product details…
         </div>
 
-        <!-- Missing / 404 State -->
         <EmptyState v-else-if="missing" title="Product not found" text="It may have been taken off the shelf or the link is incorrect.">
             <RouterLink
                 :to="`/shops/${route.params.slug}`"
@@ -39,9 +37,7 @@ onMounted(async () => {
             </RouterLink>
         </EmptyState>
 
-        <!-- Product Details Container -->
         <div v-else-if="listing" class="space-y-6">
-            <!-- Breadcrumb / Back Navigation -->
             <div class="flex items-center justify-between">
                 <RouterLink
                     :to="`/shops/${route.params.slug}`"
@@ -53,14 +49,12 @@ onMounted(async () => {
                     <span>Back to {{ listing.shop?.name || 'Shop' }}</span>
                 </RouterLink>
 
-                <!-- Stock Status Badge -->
                 <span class="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-3.5 py-1 font-mono text-xs font-semibold text-emerald-600 border border-emerald-200 shadow-sm">
                     <span class="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
                     In Stock & Ready
                 </span>
             </div>
 
-            <!-- Main Top Section: Image on Left, Title, Price & Store Info on Right -->
             <div class="grid gap-8 lg:grid-cols-12 lg:items-start rounded-3xl border border-slate-200 bg-white p-6 sm:p-10 shadow-sm">
                 <div class="lg:col-span-6">
                     <div class="overflow-hidden rounded-2xl bg-slate-50 border border-slate-100 aspect-square shadow-sm">
@@ -73,7 +67,6 @@ onMounted(async () => {
                 </div>
 
                 <div class="lg:col-span-6 flex flex-col justify-center space-y-6 lg:pl-6">
-                    <!-- Shop Name Pill -->
                     <div v-if="listing.shop">
                         <RouterLink
                             :to="`/shops/${listing.shop.slug}`"
@@ -87,7 +80,6 @@ onMounted(async () => {
                         {{ listing.title || listing.product?.name }}
                     </h1>
 
-                    <!-- Price Tag -->
                     <div class="pt-2 border-t border-slate-100">
                         <span class="text-slate-400 block font-mono text-xs uppercase tracking-wider mb-1">Price</span>
                         <span class="font-mono text-4xl font-extrabold text-slate-900 tabular-nums">

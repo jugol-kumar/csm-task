@@ -28,7 +28,6 @@ const {
 
 <template>
     <div class="space-y-6">
-        <!-- Page Heading with Orange Gradient Action Button -->
         <PageHeading eyebrow="Module 01" title="Shops" back="/admin" back-label="Admin home">
             <button
                 type="button"
@@ -39,17 +38,14 @@ const {
             </button>
         </PageHeading>
 
-        <!-- Search Bar -->
         <div class="max-w-sm">
             <SearchBar v-model="query.search" placeholder="Search shops..." />
         </div>
 
-        <!-- Loading State -->
         <div v-if="loading" class="py-8 text-center font-mono text-xs text-slate-400">
             Loading…
         </div>
 
-        <!-- Shops Table Container -->
         <div v-if="items.length" class="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
             <table class="w-full min-w-[44rem] text-left text-sm text-slate-700">
                 <thead class="border-b border-slate-200 bg-slate-50 font-mono text-xs uppercase tracking-wider text-slate-500">
@@ -62,13 +58,11 @@ const {
                 </thead>
                 <tbody class="divide-y divide-slate-100">
                 <tr v-for="shop in items" :key="shop.id" class="transition-colors hover:bg-slate-50/50">
-                    <!-- Shop Name & Slug -->
                     <td class="px-4 py-3">
                         <p class="font-semibold text-slate-900">{{ shop.name }}</p>
                         <p class="font-mono text-xs text-slate-400">/{{ shop.slug }}</p>
                     </td>
 
-                    <!-- Owner Details -->
                     <td class="px-4 py-3">
                         <template v-if="shop.owner">
                             <p class="font-medium text-slate-800">{{ shop.owner.name }}</p>
@@ -79,12 +73,10 @@ const {
                             </span>
                     </td>
 
-                    <!-- Products Count -->
                     <td class="px-4 py-3 text-right font-mono font-medium tabular-nums text-slate-900">
                         {{ shop.listings_count ?? 0 }}
                     </td>
 
-                    <!-- Actions -->
                     <td class="px-4 py-3 text-right">
                         <div class="flex items-center justify-end gap-2">
                             <button
@@ -108,7 +100,6 @@ const {
             </table>
         </div>
 
-        <!-- Empty State -->
         <EmptyState
             v-else-if="!loading"
             title="No shops yet"
@@ -123,15 +114,12 @@ const {
             </button>
         </EmptyState>
 
-        <!-- Pagination -->
         <Pagination :meta="meta" @change="setPage" />
 
-        <!-- Modal for Create/Edit -->
         <BaseModal :open="modal.open" :title="modal.record ? 'Edit shop' : 'New shop'" @close="closeForm">
             <ShopForm :shop="modal.record" @saved="saved" @cancel="closeForm" />
         </BaseModal>
 
-        <!-- Confirm Dialog for Delete -->
         <ConfirmDialog
             :open="confirm.open"
             title="Delete shop"

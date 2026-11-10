@@ -114,7 +114,6 @@ onMounted(fetchShops);
 
 <template>
     <div class="min-h-screen ">
-        <!-- Top loading bar -->
         <Transition name="fade">
             <div v-if="loading" class="fixed inset-x-0 top-0 z-50 h-1 overflow-hidden bg-orange-100">
                 <div class="loading-bar h-full w-1/3 rounded-full bg-gradient-to-r from-orange-500 to-amber-400"></div>
@@ -122,22 +121,20 @@ onMounted(fetchShops);
         </Transition>
 
         <div class="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:py-12">
-            <!-- Hero -->
             <header
                 class="relative overflow-hidden rounded-3xl border border-orange-100 bg-gradient-to-br from-orange-50 via-white to-orange-50/40 px-6 py-10 shadow-sm sm:px-10 lg:py-14"
             >
-                <!-- soft glow -->
                 <div class="pointer-events-none absolute -top-24 -right-24 size-80 rounded-full bg-orange-200/40 blur-3xl"></div>
 
                 <div class="relative flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
                     <div>
-            <span
-                class="reveal inline-flex items-center gap-2 rounded-full border border-orange-200 bg-white px-3 py-1 text-xs font-medium text-orange-600 shadow-sm"
-                style="--d: 0ms"
-            >
-                <span class="size-1.5 animate-pulse rounded-full bg-orange-500"></span>
-                Shop directory
-            </span>
+                        <span
+                            class="reveal inline-flex items-center gap-2 rounded-full border border-orange-200 bg-white px-3 py-1 text-xs font-medium text-orange-600 shadow-sm"
+                            style="--d: 0ms"
+                        >
+                            <span class="size-1.5 animate-pulse rounded-full bg-orange-500"></span>
+                            Shop directory
+                        </span>
                         <h1
                             class="reveal mt-4 text-4xl font-semibold tracking-tight text-slate-900 sm:text-5xl"
                             style="--d: 80ms"
@@ -182,7 +179,7 @@ onMounted(fetchShops);
                     </div>
                 </div>
             </header>
-            <!-- Result meta -->
+
             <div
                 class="reveal mt-8 flex items-center justify-between text-sm text-slate-500"
                 style="--d: 320ms"
@@ -200,7 +197,6 @@ onMounted(fetchShops);
                 </p>
             </div>
 
-            <!-- Error -->
             <div
                 v-if="error"
                 class="pop-in mt-5 rounded-2xl border border-slate-200 bg-white p-12 text-center shadow-sm"
@@ -222,7 +218,6 @@ onMounted(fetchShops);
                 </button>
             </div>
 
-            <!-- Loading skeleton -->
             <div v-else-if="loading" class="mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
                 <div
                     v-for="n in 6"
@@ -245,7 +240,6 @@ onMounted(fetchShops);
                 </div>
             </div>
 
-            <!-- Empty -->
             <div
                 v-else-if="shops.length === 0"
                 class="pop-in mt-5 rounded-2xl border border-dashed border-slate-300 bg-white p-12 text-center"
@@ -270,7 +264,6 @@ onMounted(fetchShops);
                 </button>
             </div>
 
-            <!-- Shops grid -->
             <TransitionGroup
                 v-else
                 tag="div"
@@ -288,7 +281,6 @@ onMounted(fetchShops);
                 />
             </TransitionGroup>
 
-            <!-- Pagination -->
             <Transition name="fade">
                 <nav
                     v-if="!error && lastPage > 1"

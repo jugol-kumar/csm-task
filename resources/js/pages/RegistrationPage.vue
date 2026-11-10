@@ -22,11 +22,9 @@ async function submit() {
 </script>
 
 <template>
-    <!-- Centered Card Container -->
     <div class="flex flex-1 items-center justify-center py-6 sm:py-12">
         <div class="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
 
-            <!-- Header Section -->
             <div class="mb-8 text-center">
                 <span class="inline-block text-xs font-mono font-semibold uppercase tracking-widest text-amber-600">
                     Get Started
@@ -39,7 +37,6 @@ async function submit() {
                 </p>
             </div>
 
-            <!-- Form -->
             <form class="space-y-4" @submit.prevent="submit">
                 <FormField label="Full Name" :error="err('name')">
                     <input
@@ -85,7 +82,6 @@ async function submit() {
                     />
                 </FormField>
 
-                <!-- Submit Button with Orange Gradient -->
                 <button
                     type="submit"
                     class="mt-2 w-full rounded-lg bg-gradient-to-r from-amber-500 via-orange-500 to-rose-500 py-3 font-semibold text-white shadow-md transition-all duration-200 hover:opacity-95 active:scale-[0.99] disabled:opacity-70"
@@ -102,7 +98,6 @@ async function submit() {
                 </button>
             </form>
 
-            <!-- Footer Link to Login -->
             <div class="mt-6 text-center text-xs text-slate-500">
                 Already have an account?
                 <RouterLink to="/login" class="font-semibold text-orange-600 hover:underline">

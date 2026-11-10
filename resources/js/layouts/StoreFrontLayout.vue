@@ -60,12 +60,10 @@ async function logout() {
             </div>
         </header>
 
-        <!-- Main Content -->
         <main class="mx-auto w-full max-w-6xl flex-1 px-4 py-8 bg-white text-slate-800">
             <RouterView/>
         </main>
 
-        <!-- Footer -->
         <footer class="border-t border-dashed border-slate-200 bg-white">
             <div class="mx-auto max-w-6xl px-4 py-5 font-mono text-xs text-slate-400">
                 {{ app_name }} · one shared catalog, every shop sets its own price

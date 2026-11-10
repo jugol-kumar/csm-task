@@ -44,7 +44,6 @@ watch(slug, (value) => {
 
 <template>
     <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        <!-- Missing / 404 State -->
         <EmptyState v-if="missing" title="Shop not found" text="This shop is closed or the address is wrong.">
             <RouterLink
                 to="/"
@@ -54,19 +53,14 @@ watch(slug, (value) => {
             </RouterLink>
         </EmptyState>
 
-        <!-- Main Shop View -->
         <div v-else-if="shop" class="space-y-8">
-            <!-- Shop Header -->
             <ShopHeader :shop="shop" />
 
-            <!-- Filters & Search Bar Section -->
             <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                <!-- Search Bar -->
                 <div class="w-full sm:max-w-md flex-1">
                     <SearchBar v-model="query.search" placeholder="Search products in this shop..." />
                 </div>
 
-                <!-- Sort Dropdown -->
                 <div class="relative w-full sm:w-auto">
                     <select
                         v-model="filters.sort"
@@ -77,7 +71,6 @@ watch(slug, (value) => {
                         <option value="price_desc">Price, high to low</option>
                     </select>
 
-                    <!-- Dropdown Chevron Icon -->
                     <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-400">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-4 w-4">
                             <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
@@ -86,24 +79,20 @@ watch(slug, (value) => {
                 </div>
             </div>
 
-            <!-- Loading Indicator -->
             <div v-if="loading" class="py-12 text-center font-mono text-xs text-slate-400">
                 Loading products…
             </div>
 
-            <!-- Products Grid -->
             <div v-if="items.length" class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
                 <ProductCard v-for="listing in items" :key="listing.id" :listing="listing" />
             </div>
 
-            <!-- Empty Search State -->
             <EmptyState
                 v-else-if="!loading"
                 title="Nothing here"
                 text="No products match your search criteria."
             />
 
-            <!-- Pagination -->
             <div class="pt-4">
                 <Pagination :meta="meta" @change="setPage" />
             </div>

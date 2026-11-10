@@ -37,10 +37,8 @@ const modules = [
 
 <template>
     <div class="space-y-10">
-        <!-- Header Section -->
         <PageHeading eyebrow="Control room" title="Admin home" />
 
-        <!-- Counter Overview Section -->
         <section class="space-y-3">
             <h2 class="font-mono text-xs font-semibold uppercase tracking-wider text-slate-400">
                 Right now
@@ -48,7 +46,6 @@ const modules = [
             <CounterCard :items="strip" :loading="loading" />
         </section>
 
-        <!-- Navigation Modules Section -->
         <section class="space-y-3">
             <h2 class="font-mono text-xs font-semibold uppercase tracking-wider text-slate-400">
                 Manage
