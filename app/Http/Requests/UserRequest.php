@@ -15,12 +15,12 @@ class UserRequest extends FormRequest
     public function rules(): array
     {
         $user = $this->route('user');
-
+        $isUpdate = in_array($this->method(), ['PUT', 'PATCH']);
         return [
             'name' => ['required', 'string', 'max:120'],
             'email' => ['required', 'email', 'max:255', Rule::unique('users', 'email')->ignore($user?->id)],
             'password' => [$user ? 'nullable' : 'required', 'string', 'min:8'],
-            'role' => ['required', Rule::in(['customer', 'owner', 'admin'])],
+            'role' => [$isUpdate ? 'sometimes' : 'required', Rule::in(['customer', 'owner', 'admin'])],
 
             'store_id' => [
                 'nullable',

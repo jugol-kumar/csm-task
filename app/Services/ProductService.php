@@ -47,19 +47,26 @@ class ProductService
 
     public function update(Product $product, array $data): Product
     {
-        $product->update([
+        $updateData = [
             'name' => $data['name'],
             'description' => $data['description'] ?? null,
-            'base_price' => $data['base_price'],
-            'thumbnail' => $this->images->replace(
+            'price' => $data['base_price'],
+        ];
+
+        if (isset($data['thumbnail']) || !empty($data['remove_thumbnail'])) {
+            $updateData['image'] = $this->images->replace(
                 $product->thumbnail,
                 $data['thumbnail'] ?? null,
                 (bool) ($data['remove_thumbnail'] ?? false),
                 'products'
-            ),
-        ]);
+            );
+        }
 
-        return $product->refresh()->load('creator:id,name')->loadCount('listings');
+        $product->update($updateData);
+
+        return $product->refresh()
+            ->load('creator:id,name')
+            ->loadCount('listings');
     }
 
     public function delete(Product $product): void

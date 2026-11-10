@@ -18,7 +18,7 @@ const { busy, run, err } = useFormSubmit();
 const form = reactive({
     name: props.product?.name ?? '',
     description: props.product?.description ?? '',
-    base_price: props.product?.base_price ?? '',
+    base_price: props.product?.price ?? '',
     thumbnail: null,
     remove_thumbnail: false,
 });
@@ -70,7 +70,7 @@ async function submit() {
             <ImagePicker
                 v-model="form.thumbnail"
                 v-model:remove="form.remove_thumbnail"
-                :current-url="product?.thumbnail_url"
+                :current-url="product?.image"
                 :name="form.name"
                 :error="err('thumbnail')"
             />

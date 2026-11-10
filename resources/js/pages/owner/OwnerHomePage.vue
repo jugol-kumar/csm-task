@@ -41,8 +41,7 @@ const strip = computed(() => [
         />
 
         <template v-else-if="data">
-            <PageHeading eyebrow="Your shop" :title="data.shop.name">
-            </PageHeading>
+            <PageHeading eyebrow="Your shop" :title="data.shop.name"/>
 
             <section>
                 <h2 class="label">Right now</h2>

@@ -7,3 +7,6 @@
 @theme {
     --font-mono: "Montserrat", sans-serif;;
 }
+a,button{
+    cursor: pointer;
+}

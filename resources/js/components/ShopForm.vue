@@ -12,10 +12,11 @@ const toast = useToast();
 const { busy, run, err } = useFormSubmit();
 
 const currentStep = ref(1);
+const isEdit = !!props.shop;
 
 const form = reactive({
-    owner_name: '',
-    owner_email: '',
+    owner_name: props.shop?.owner?.name ?? '',
+    owner_email: props.shop?.owner?.email ?? '',
     owner_password: '',
 
     name: props.shop?.name ?? '',
@@ -49,14 +50,19 @@ async function submit() {
         }
     });
 
+    // Laravel multipart PUT parse korte pare na -> POST + _method spoofing
+    if (isEdit) {
+        formData.append('_method', 'PUT');
+    }
+
     const res = await run(() =>
-        props.shop
+        isEdit
             ? storeService.update(props.shop.id, formData)
             : storeService.create(formData)
     );
 
     if (res) {
-        toast.success(props.shop ? 'Shop updated successfully' : 'Shop & Owner created successfully');
+        toast.success(isEdit ? 'Shop updated successfully' : 'Shop & Owner created successfully');
         emit('saved');
     }
 }
@@ -106,11 +112,16 @@ async function submit() {
                 />
             </FormField>
 
-            <FormField label="Password" :error="err('owner_password')" hint="At least 8 characters.">
+            <FormField
+                label="Password"
+                :error="err('owner_password')"
+                :hint="isEdit ? 'Leave blank to keep the current password.' : 'At least 8 characters.'"
+            >
                 <input
                     v-model="form.owner_password"
                     type="password"
                     placeholder="••••••••"
+                    autocomplete="new-password"
                     class="w-full rounded-lg border border-slate-200 bg-white px-3.5 py-2.5 text-slate-800 placeholder-slate-400 shadow-sm transition-colors focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20"
                 />
             </FormField>

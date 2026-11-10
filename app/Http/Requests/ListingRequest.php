@@ -29,7 +29,7 @@ class ListingRequest extends FormRequest
                 'required',
                 'integer',
                 'exists:products,id',
-                Rule::unique('store_product_mappings', 'product_id')->where('store_id_id', $store?->id),
+                Rule::unique('store_product_mappings', 'product_id')->where('store_id', $store?->id),
             ];
         }
 

@@ -30,6 +30,7 @@ const {
 } = useCrudPage({ list: productService.list, remove: productService.remove, noun: 'Product', filters });
 
 function saver(payload) {
+    console.log('yes called up', payload)
     return modal.record ? productService.update(modal.record.id, payload) : productService.create(payload);
 }
 </script>

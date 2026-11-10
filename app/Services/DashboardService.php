@@ -24,11 +24,11 @@ class DashboardService
     public function owner(User $user, Store $shop): array
     {
         return [
-            'listings' => StoreProductMapping::where('shop_id', $shop->id)->count(),
-            'active' => StoreProductMapping::where('shop_id', $shop->id)->count(),
+            'listings' => StoreProductMapping::where('store_id', $shop->id)->count(),
+            'active' => StoreProductMapping::where('store_id', $shop->id)->count(),
             'catalog' => Product::count(),
-            'available' => Product::whereDoesntHave('listings', fn ($query) => $query->where('shop_id', $shop->id))->count(),
-            'mine' => Product::where('created_by', $user->id)->count(),
+            'available' => Product::whereDoesntHave('listings', fn ($query) => $query->where('store_id', $shop->id))->count(),
+            'mine' => Product::where('user_id', $user->id)->count(),
         ];
     }
 }

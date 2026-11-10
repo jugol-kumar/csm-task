@@ -32,9 +32,9 @@ class StoreController extends Controller
         return response()->json($shop->load('owner:id,name,email')->loadCount('listings'));
     }
 
-    public function update(StoreRequest $request, Store $shop)
+    public function update(StoreRequest $request, Store $store)
     {
-        return response()->json($this->store->update($shop, $request->validated()));
+        return response()->json($this->store->update($store, $request->validated()));
     }
 
     public function destroy(Store $shop): Response

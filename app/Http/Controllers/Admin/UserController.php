@@ -24,19 +24,19 @@ class UserController extends Controller
 
     public function store(UserRequest $request): JsonResponse
     {
-        $owner = $this->userService->create($request->validated());
-        return response()->json($owner);
+        $user = $this->userService->create($request->validated());
+        return response()->json($user);
     }
 
-    public function show(User $owner)
+    public function show(User $user)
     {
-        $this->ensureOwner($owner);
-        return response()->json($owner->load('store:id,owner_id,name,slug'));
+        $this->ensureOwner($user);
+        return response()->json($user->load('store:id,owner_id,name,slug'));
     }
 
-    public function update(UserRequest $request, User $owner)
+    public function update(UserRequest $request, User $user)
     {
-        return response()->json($this->userService->update($owner, $request->validated()));
+        return response()->json($this->userService->update($user, $request->validated()));
     }
 
     public function destroy(User $user)

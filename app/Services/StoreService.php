@@ -12,7 +12,7 @@ use Illuminate\Support\Str;
 
 class StoreService
 {
-    public function __construct(private readonly ImageService $images, private AuthService $authService)
+    public function __construct(private readonly ImageService $images, private readonly AuthService $authService)
     {
     }
 
@@ -44,21 +44,36 @@ class StoreService
     {
         $shop = Store::create(array_merge(
             $data,
+            ['logo' => isset($data['logo']) ? $this->images->store($data['thumbnail'], 'products') : null],
             ['user_id' => $user->id],
             ['slug' => $this->uniqueSlug($data['name'])]
         ));
         return $shop->load('owner:id,name,email');
     }
 
-    public function update(Store $shop, array $data): Store
+    public function update(Store $store, array $data): Store
     {
-        if ($shop->name !== $data['name']) {
-            $data['slug'] = $this->uniqueSlug($data['name'], $shop->id);
+        if (isset($data['name']) && $store->name !== $data['name']) {
+            $data['slug'] = $this->uniqueSlug($data['name'], $store->id);
         }
-
-        $shop->update($data);
-
-        return $shop->refresh()->load('owner:id,name,email')->loadCount('listings');
+        if (isset($data['logo'])) {
+            $data['logo'] = $this->images->store($data['logo'], 'stores');
+        }
+        if (isset($data['banner'])) {
+            $data['banner'] = $this->images->store($data['banner'], 'stores');
+        }
+        $ownerData = [
+            'name' => $data['owner_name'],
+            'email' => $data['owner_email'],
+        ];
+        if(isset($data['owner_password'])){
+            $ownerData['password'] = Hash::make($data['owner_password']);
+        }
+        $store->owner->update($ownerData);
+        $store->update($data);
+        return $store->refresh()
+            ->load('owner:id,name,email')
+            ->loadCount('listings');
     }
 
     public function delete(Store $shop): void

@@ -1,5 +1,5 @@
-import {toFormData} from "axios";
-import api from "@/utils/api.js";
+ import api from "@/utils/api.js";
+ import {toFormData} from "@/utils/formData.js";
 
 export const productService = {
     list: (params) => api.get('/admin/products', {params}).then((res) => res.data),

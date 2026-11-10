@@ -59,8 +59,30 @@ const {
                 <tbody class="divide-y divide-slate-100">
                 <tr v-for="shop in items" :key="shop.id" class="transition-colors hover:bg-slate-50/50">
                     <td class="px-4 py-3">
-                        <p class="font-semibold text-slate-900">{{ shop.name }}</p>
-                        <p class="font-mono text-xs text-slate-400">/{{ shop.slug }}</p>
+                        <div v-if="shop" class="inline-flex items-center gap-3 ">
+                            <div class="relative h-9 w-9 shrink-0 overflow-hidden rounded-lg border border-slate-200/70 bg-white shadow-xs">
+                                <img
+                                    v-if="shop.logo"
+                                    :src="shop.logo"
+                                    :alt="shop.name"
+                                    class="h-full w-full object-cover"
+                                />
+                                <div
+                                    v-else
+                                    class="flex h-full w-full items-center justify-center bg-gradient-to-br from-amber-500 via-orange-500 to-rose-500 font-bold text-white shadow-inner"
+                                >
+                                    <span class="text-xs uppercase font-sans">
+                                        {{ shop.name?.charAt(0) || 'S' }}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="min-w-0 space-y-0.5">
+                                <div class="flex items-center gap-1.5 leading-none">
+                                    <span class="font-bold text-xs text-slate-900 truncate">{{ shop.name }}</span>
+                                 </div>
+                            </div>
+                        </div>
                     </td>
 
                     <td class="px-4 py-3">
@@ -79,6 +101,10 @@ const {
 
                     <td class="px-4 py-3 text-right">
                         <div class="flex items-center justify-end gap-2">
+                            <RouterLink :to="`/shops/${shop.slug}`" class="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-sm transition-all duration-200 hover:border-orange-500 hover:text-orange-600 active:scale-95"
+                             >
+                                View Store
+                            </RouterLink>
                             <button
                                 type="button"
                                 class="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-sm transition-all duration-200 hover:border-orange-500 hover:text-orange-600 active:scale-95"

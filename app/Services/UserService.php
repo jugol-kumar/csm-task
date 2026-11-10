@@ -17,7 +17,7 @@ readonly class UserService
     public function paginate(?string $search, int $perPage = 10): LengthAwarePaginator
     {
         return User::query()
-            ->with('store:id,user_id,name,slug')
+            ->with(['store:id,user_id,name,slug,logo', 'store.owner:id,name'])
             ->when($search, function ($query) use ($search) {
                 $query->where(function ($inner) use ($search) {
                     $inner->where('name', 'like', "%{$search}%")
