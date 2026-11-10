@@ -20,41 +20,27 @@ const routes = [
                 component: () => import('@/pages/RegistrationPage.vue'),
                 meta: {guest: true},
             },
-            // {
-            //     path: 'shops/:slug',
-            //     component: () => import('@/pages/ShopPage.vue'),
-            // },
-            // {
-            //     path: 'shops/:slug/products/:id',
-            //     component: () => import('@/pages/ProductPage.vue'),
-            // },
         ],
     },
-    // {
-    //     path: '/',
-    //     component: () => import('@/layouts/BareLayout.vue'),
-    //     children: [
-    //         {
-    //             path: 'login',
-    //             component: () => import('@/pages/LoginPage.vue'),
-    //             meta: { guest: true },
-    //         },
-    //         {
-    //             path: 'register',
-    //             component: () => import('@/pages/RegisterPage.vue'),
-    //             meta: { guest: true },
-    //         },
-    //         {
-    //             path: 'admin/login',
-    //             component: () => import('@/pages/admin/AdminLoginPage.vue'),
-    //             meta: { guest: true },
-    //         },
-    //     ],
-    // },
+    {
+        path: '/',
+        component: () => import('@/layouts/StoreFrontLayout.vue'),
+        meta: {ownShopOnly: true},
+        children: [
+            {
+                path: 'shops/:slug',
+                component: () => import('@/pages/ShopPage.vue'),
+            },
+            {
+                path: 'shops/:slug/products/:id',
+                component: () => import('@/pages/ProductPage.vue'),
+            },
+        ],
+    },
     {
         path: '/admin',
         component: () => import('@/layouts/AdminLayout.vue'),
-        meta: { roles: ['admin'] },
+        meta: {roles: ['admin']},
         children: [
             {
                 path: '',
@@ -68,39 +54,35 @@ const routes = [
                 path: 'products',
                 component: () => import('@/pages/admin/AdminProductPage.vue'),
             },
-            // {
-            //     path: 'owners',
-            //     component: () => import('@/pages/admin/AdminOwnersPage.vue'),
-            // },
+            {
+                path: 'users',
+                component: () => import('@/pages/admin/AdminUserPage.vue'),
+            },
         ],
     },
-    // {
-    //     path: '/owner',
-    //     component: () => import('@/layouts/OwnerLayout.vue'),
-    //     meta: { roles: ['shop_owner'] },
-    //     children: [
-    //         {
-    //             path: '',
-    //             component: () => import('@/pages/owner/OwnerHomePage.vue'),
-    //         },
-    //         {
-    //             path: 'catalog',
-    //             component: () => import('@/pages/owner/OwnerCatalogPage.vue'),
-    //         },
-    //         {
-    //             path: 'listings',
-    //             component: () => import('@/pages/owner/OwnerListingsPage.vue'),
-    //         },
-    //         {
-    //             path: 'products/new',
-    //             component: () => import('@/pages/owner/OwnerNewProductPage.vue'),
-    //         },
-    //     ],
-    // },
-    // {
-    //     path: '/:pathMatch(.*)*',
-    //     component: () => import('@/pages/NotFoundPage.vue'),
-    // },
+    {
+        path: '/owner',
+        component: () => import('@/layouts/OwnerLayout.vue'),
+        meta: {roles: ['owner']},
+        children: [
+            {
+                path: '',
+                component: () => import('@/pages/owner/OwnerHomePage.vue'),
+            },
+               {
+                    path: 'catalog',
+                    component: () => import('@/pages/owner/OwnerCatalogPage.vue'),
+               },
+                // {
+                //     path: 'listings',
+                //     component: () => import('@/pages/owner/OwnerListingsPage.vue'),
+                // },
+                // {
+                //     path: 'products/new',
+                //     component: () => import('@/pages/owner/OwnerNewProductPage.vue'),
+                // },
+        ],
+    },
 ];
 
 const router = createRouter({
@@ -111,10 +93,9 @@ const router = createRouter({
 
 export function homeFor(role) {
     if (role === 'admin') return '/admin';
-    if (role === 'shop_owner') return '/owner';
+    if (role === 'owner') return '/owner';
     return '/';
 }
-
 
 router.beforeEach(async (to) => {
     const auth = useAuthStore();
@@ -122,12 +103,23 @@ router.beforeEach(async (to) => {
 
     if (to.meta.roles) {
         if (!auth.isAuthenticated) {
-            const login = to.path.startsWith('/admin') ? '/admin/login' : '/login';
-            return { path: login, query: { redirect: to.fullPath } };
+            return {path: '/login', query: {redirect: to.fullPath}};
         }
 
         if (!to.meta.roles.includes(auth.role)) {
             return homeFor(auth.role);
+        }
+    }
+
+    if (to.meta.ownShopOnly && auth.isAuthenticated && auth.role === 'owner') {
+        const ownSlug = auth.user?.shop?.slug;
+
+        if (!ownSlug) {
+            return homeFor(auth.role);
+        }
+
+        if (to.params.slug !== ownSlug) {
+            return {path: `/shops/${ownSlug}`};
         }
     }
 
@@ -137,6 +129,5 @@ router.beforeEach(async (to) => {
 
     return true;
 });
-
 
 export default router;

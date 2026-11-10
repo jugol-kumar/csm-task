@@ -3,25 +3,26 @@
 namespace App\Services;
 
 use App\Models\Product;
-use App\Models\Shop;
-use App\Models\ShopProduct;
+use App\Models\Store;
+use App\Models\StoreProductMapping;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Validation\ValidationException;
 
-class ListingService
+readonly class ListingService
 {
     public function __construct(private ImageService $images)
     {
     }
 
-    public function forShop(Shop $shop, ?string $search, int $perPage = 12): LengthAwarePaginator
+    public function forShop(Store $store, ?string $search, int $perPage = 12): LengthAwarePaginator
     {
-        return ShopProduct::query()
-            ->where('shop_id', $shop->id)
-            ->with(['product', 'shop:id,name,slug'])
+        return StoreProductMapping::query()
+            ->where('store_id', $store->id)
+            ->with(['product', 'store:id,name,slug'])
             ->when($search, function (Builder $query) use ($search) {
                 $query->where(function (Builder $inner) use ($search) {
-                    $inner->where('title', 'like', "%{$search}%")
+                    $inner->where('name', 'like', "%{$search}%")
                         ->orWhereHas('product', fn (Builder $product) => $product->where('name', 'like', "%{$search}%"));
                 });
             })
@@ -29,81 +30,100 @@ class ListingService
             ->paginate($perPage);
     }
 
-    public function catalog(Shop $shop, int $userId, ?string $search, string $scope, int $perPage = 12): LengthAwarePaginator
+    public function catalog(Store $store, int $userId, ?string $search, string $scope, int $perPage = 12): LengthAwarePaginator
     {
-        $page = Product::query()
-            ->with('creator:id,name')
-            ->withExists(['listings as is_listed' => fn (Builder $query) => $query->where('shop_id', $shop->id)])
-            ->when($search, fn (Builder $query) => $query->where('name', 'like', "%{$search}%"))
-            ->when($scope === 'available', fn (Builder $query) => $query->whereDoesntHave(
-                'listings',
-                fn (Builder $listing) => $listing->where('shop_id', $shop->id)
-            ))
-            ->when($scope === 'mine', fn (Builder $query) => $query->where('created_by', $userId))
+        $inStore = fn ($listing) => $listing->where('store_id', $store->id);
+
+        return Product::query()
+            ->with([
+                'creator:id,name',
+                'listings' => $inStore,
+            ])
+            ->when($search, function (Builder $query) use ($search, $store) {
+                $query->where(function (Builder $inner) use ($search, $store) {
+                    $inner->where('name', 'like', "%{$search}%")
+                        ->orWhereHas('listings', fn ($listing) => $listing
+                            ->where('store_id', $store->id)
+                            ->where('name', 'like', "%{$search}%"));
+                });
+            })
+            ->when($scope === 'available', fn (Builder $query) => $query->whereDoesntHave('listings', $inStore))
+            ->when($scope === 'mine', fn (Builder $query) => $query->where('user_id', $userId))
+            ->when(! in_array($scope, ['available', 'mine'], true), fn (Builder $query) => $query->whereHas('listings', $inStore))
             ->latest('id')
-            ->paginate($perPage);
-
-        $page->getCollection()->each(
-            fn (Product $product) => $product->setAttribute('is_mine', $product->created_by === $userId)
-        );
-
-        return $page;
+            ->paginate($perPage)
+            ->through(function (Product $product) use ($userId) {
+                $listing = $product->listings->first();
+                return [
+                    'id' => $listing?->id,
+                    'product_id' => $product->id,
+                    'name' => $listing?->name ?? $product->name,
+                    'description' => $listing?->description ?? $product->description,
+                    'price' => $listing?->price ?? $product->price,
+                    'image' => $listing?->image ?? $product->image,
+                    'is_listed' => $listing !== null,
+                    'is_mine' => (int) $product->user_id === $userId,
+                    'creator' => $product->creator,
+                ];
+            });
     }
-
-    public function attach(Shop $shop, Product $product, array $data): ShopProduct
+    public function attach(Store $store, Product $product, array $data, int $userId): StoreProductMapping
     {
-        $overrides = $this->overrides($product, $data);
+        $exists = StoreProductMapping::query()
+            ->where('store_id', $store->id)
+            ->where('product_id', $product->id)
+            ->exists();
 
-        $listing = ShopProduct::create([
-            'shop_id' => $shop->id,
+        if ($exists) {
+            throw ValidationException::withMessages([
+                'product' => 'This product is already in your shop.',
+            ]);
+        }
+
+        $title = trim((string) ($data['title'] ?? ''));
+        $description = trim((string) ($data['description'] ?? ''));
+
+        $listing = StoreProductMapping::create([
+            'store_id' => $store->id,
             'product_id' => $product->id,
-            'title' => $overrides['title'],
-            'description' => $overrides['description'],
-            'price' => $data['price'] ?? $product->base_price,
-            'thumbnail' => isset($data['thumbnail'])
+            'assign_by' => $userId,
+            'name' => $title !== '' ? $title : $product->name,
+            'description' => $description !== '' ? $description : $product->description,
+            'price' => $data['price'],
+            'image' => isset($data['thumbnail'])
                 ? $this->images->store($data['thumbnail'], 'listings')
                 : null,
-            'is_active' => $data['is_active'] ?? true,
+            'assign_date' => now()->toDateString(),
         ]);
 
-        return $listing->load(['product', 'shop:id,name,slug']);
+        return $listing->load(['product', 'store:id,name,slug']);
     }
 
-    public function update(ShopProduct $listing, array $data): ShopProduct
+    public function update(StoreProductMapping $listing, array $data): StoreProductMapping
     {
         $listing->loadMissing('product');
-        $overrides = $this->overrides($listing->product, $data);
+
+        $title = trim((string) ($data['title'] ?? ''));
+        $description = trim((string) ($data['description'] ?? ''));
 
         $listing->update([
-            'title' => $overrides['title'],
-            'description' => $overrides['description'],
+            'name' => $title !== '' ? $title : $listing->product->name,
+            'description' => $description !== '' ? $description : $listing->product->description,
             'price' => $data['price'],
-            'thumbnail' => $this->images->replace(
-                $listing->thumbnail,
+            'image' => $this->images->replace(
+                $listing->image,
                 $data['thumbnail'] ?? null,
                 (bool) ($data['remove_thumbnail'] ?? false),
                 'listings'
             ),
-            'is_active' => $data['is_active'] ?? $listing->is_active,
         ]);
 
-        return $listing->refresh()->load(['product', 'shop:id,name,slug']);
+        return $listing->refresh()->load(['product', 'store:id,name,slug']);
     }
 
-    public function detach(ShopProduct $listing): void
+    public function detach(StoreProductMapping $listing): void
     {
-        $this->images->delete($listing->thumbnail);
+        $this->images->delete($listing->image);
         $listing->delete();
-    }
-
-    private function overrides(Product $product, array $data): array
-    {
-        $title = isset($data['title']) ? trim($data['title']) : '';
-        $description = isset($data['description']) ? trim($data['description']) : '';
-
-        return [
-            'title' => ($title === '' || $title === $product->name) ? null : $title,
-            'description' => ($description === '' || $description === $product->description) ? null : $description,
-        ];
     }
 }

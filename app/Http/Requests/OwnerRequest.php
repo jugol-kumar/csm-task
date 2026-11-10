@@ -14,21 +14,21 @@ class OwnerRequest extends FormRequest
 
     public function rules(): array
     {
-        $owner = $this->route('owner');
+        $owner = $this->route('users');
 
         return [
             'name' => ['required', 'string', 'max:120'],
             'email' => ['required', 'email', 'max:255', Rule::unique('users', 'email')->ignore($owner?->id)],
             'password' => [$owner ? 'nullable' : 'required', 'string', 'min:8'],
+            'role' => ['required', Rule::in(['customer', 'owner', 'admin'])],
             'shop_id' => [
                 'nullable',
                 'integer',
                 Rule::exists('shops', 'id')->where(function ($query) use ($owner) {
                     $query->where(function ($inner) use ($owner) {
-                        $inner->whereNull('owner_id');
-
+                        $inner->whereNull('user_id');
                         if ($owner) {
-                            $inner->orWhere('owner_id', $owner->id);
+                            $inner->orWhere('user_id', $owner->id);
                         }
                     });
                 }),

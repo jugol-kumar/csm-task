@@ -8,13 +8,12 @@ use App\Models\User;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 
-class OwnerService
+class UserService
 {
     public function paginate(?string $search, int $perPage = 10): LengthAwarePaginator
     {
         return User::query()
-            ->where('role', Role::$OWNER)
-            ->with('shop:id,owner_id,name,slug')
+            ->with('store:id,user_id,name,slug')
             ->when($search, function ($query) use ($search) {
                 $query->where(function ($inner) use ($search) {
                     $inner->where('name', 'like', "%{$search}%")
@@ -32,12 +31,12 @@ class OwnerService
                 'name' => $data['name'],
                 'email' => $data['email'],
                 'password' => $data['password'],
-                'role' => Role::$OWNER,
+                'role' => $data['role'] ?? Role::$OWNER,
             ]);
 
             $this->assignShop($user, $data['shop_id'] ?? null);
 
-            return $user->load('shop:id,owner_id,name,slug');
+            return $user->load('store:id,user_id,name,slug');
         });
     }
 
@@ -48,16 +47,12 @@ class OwnerService
                 'name' => $data['name'],
                 'email' => $data['email'],
             ]);
-
             if (! empty($data['password'])) {
                 $user->password = $data['password'];
             }
-
             $user->save();
-
             $this->assignShop($user, $data['shop_id'] ?? null);
-
-            return $user->load('shop:id,owner_id,name,slug');
+            return $user->load('store:id,user_id,name,slug');
         });
     }
 
@@ -73,12 +68,12 @@ class OwnerService
     {
         $shopId = $shopId ? (int) $shopId : null;
 
-        Store::where('owner_id', $user->id)
+        Store::where('user_id', $user->id)
             ->when($shopId, fn ($query) => $query->where('id', '!=', $shopId))
-            ->update(['owner_id' => null]);
+            ->update(['user_id' => null]);
 
         if ($shopId) {
-            Store::whereKey($shopId)->update(['owner_id' => $user->id]);
+            Store::whereKey($shopId)->update(['user_id' => $user->id]);
         }
     }
 }

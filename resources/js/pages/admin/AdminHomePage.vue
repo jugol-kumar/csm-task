@@ -31,7 +31,7 @@ const strip = computed(() => [
 const modules = [
     { no: '01', title: 'Shops', text: 'Create, edit and close shops. Link an owner to each.', to: '/admin/shops' },
     { no: '02', title: 'Products', text: 'Manage the shared catalog that every shop picks from.', to: '/admin/products' },
-    { no: '03', title: 'Shop owners', text: 'Create owner accounts and connect them to shops.', to: '/admin/owners' },
+    { no: '03', title: 'All Users', text: 'Create user accounts and connect them to shops.', to: '/admin/users' },
 ];
 </script>
 

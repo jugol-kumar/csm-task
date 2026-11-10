@@ -3,24 +3,22 @@
 namespace App\Http\Controllers\Owner;
 
 use App\Http\Requests\ListingRequest;
-use App\Http\Resources\ListingResource;
 use App\Models\Product;
-use App\Models\ShopProduct;
+use App\Models\StoreProductMapping;
 use App\Services\ListingService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
 
 class ListingController extends OwnerBaseController
 {
-    public function __construct(private ListingService $listings)
+    public function __construct(private readonly ListingService $listings)
     {
     }
 
-    public function index(Request $request): AnonymousResourceCollection
+    public function index(Request $request)
     {
-        return ListingResource::collection(
+        return response()->json(
             $this->listings->forShop($this->shop($request), (string) $request->query('search', ''))
         );
     }
@@ -30,27 +28,23 @@ class ListingController extends OwnerBaseController
         $shop = $this->shop($request);
         $product = Product::findOrFail($request->validated('product_id'));
 
-        $listing = $this->listings->attach($shop, $product, $request->validated());
-
-        return (new ListingResource($listing))->response()->setStatusCode(201);
+        $listing = $this->listings->attach($shop, $product, $request->validated(), $request->user()->id);
+        return response()->json($listing);
     }
 
-    public function update(ListingRequest $request, ShopProduct $listing): ListingResource
+    public function update(ListingRequest $request, StoreProductMapping $listing)
     {
         $this->ownListing($request, $listing);
-
-        return new ListingResource($this->listings->update($listing, $request->validated()));
+        return response()->json($this->listings->update($listing, $request->validated()));
     }
 
-    public function destroy(Request $request, ShopProduct $listing): Response
+    public function destroy(Request $request, StoreProductMapping $listing): Response
     {
-        $this->ownListing($request, $listing);
         $this->listings->detach($listing);
-
         return response()->noContent();
     }
 
-    private function ownListing(Request $request, ShopProduct $listing): void
+    private function ownListing(Request $request, StoreProductMapping $listing): void
     {
         abort_unless($listing->shop_id === $this->shop($request)->id, 404);
     }

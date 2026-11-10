@@ -9,14 +9,14 @@ defineProps({
 
 <template>
     <RouterLink
-        :to="`/shops/${listing.shop.slug}/products/${listing.id}`"
+        :to="`/shops/${listing.store.slug}/products/${listing.id}`"
         class="group relative flex flex-col overflow-hidden rounded-xl border border-slate-200 bg-white p-3.5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-orange-300 hover:shadow-md"
     >
         <div class="relative aspect-square w-full overflow-hidden rounded-lg bg-slate-100">
             <img
-                v-if="listing.thumbnail_url"
-                :src="listing.thumbnail_url"
-                :alt="listing.title ?? 'Product image'"
+                v-if="listing.image || listing.product.image"
+                :src="listing.image || listing.product.image"
+                :alt="listing.name || listing.product.name || 'Product image'"
                 class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
             />
             <div
@@ -34,11 +34,11 @@ defineProps({
                     v-if="showShop"
                     class="mb-1 font-mono text-[11px] font-medium uppercase tracking-wider text-slate-400 transition-colors group-hover:text-amber-600"
                 >
-                    {{ listing.shop.name }}
+                    {{ listing.store.name }}
                 </p>
 
                 <h3 class="line-clamp-2 font-medium text-slate-800 transition-colors group-hover:text-slate-900">
-                    {{ listing.title }}
+                    {{ listing.name || listing.product.name}}
                 </h3>
             </div>
             <div class="mt-4 flex items-baseline justify-between border-t border-slate-100 pt-3">

@@ -19,6 +19,10 @@ class StoreRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'max:120'],
             'description' => ['nullable', 'string', 'max:2000'],
+
+            'owner_name' => ['string', 'max:120'],
+            'owner_email' => ['string', 'unique:users,email', 'max:120'],
+            'owner_password' => ['string', 'max:20', 'min:6'],
         ];
     }
 

@@ -112,7 +112,7 @@ function saver(payload) {
                         </div>
                     </td>
 
-                    <td class="px-4 py-3">
+                    <td class="px-4 w-72 py-3">
                         <p class="font-semibold text-slate-900">{{ product.name }}</p>
                         <p class="line-clamp-1 max-w-xs text-xs text-slate-500">{{ product.description }}</p>
                     </td>

@@ -25,7 +25,7 @@ class DashboardService
     {
         return [
             'listings' => StoreProductMapping::where('shop_id', $shop->id)->count(),
-            'active' => StoreProductMapping::where('shop_id', $shop->id)->where('is_active', true)->count(),
+            'active' => StoreProductMapping::where('shop_id', $shop->id)->count(),
             'catalog' => Product::count(),
             'available' => Product::whereDoesntHave('listings', fn ($query) => $query->where('shop_id', $shop->id))->count(),
             'mine' => Product::where('created_by', $user->id)->count(),

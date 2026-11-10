@@ -1,6 +1,6 @@
 <script setup>
 import { reactive, ref } from 'vue';
-import { shopService } from '@/services/shop.service';
+import { storeService } from '@/services/store.service.js';
 import { useFormSubmit } from '@/composables/useFormSubmit';
 import { useToast } from '@/composables/useToast';
 import FormField from '@/components/FormField.vue';
@@ -59,8 +59,8 @@ async function submit() {
 
     const res = await run(() =>
         props.shop
-            ? shopService.update(props.shop.id, formData)
-            : shopService.create(formData)
+            ? storeService.update(props.shop.id, formData)
+            : storeService.create(formData)
     );
 
     if (res) {

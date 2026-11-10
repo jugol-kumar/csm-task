@@ -20,7 +20,7 @@ class ProductController extends Controller
 
     public function index(Request $request)
     {
-            $data = $this->products->paginate($request->query('search', ''), $request->query('source', ''));
+            $data = $this->products->paginate($request->query('search', ''), $request->query('source', ''), user:$request->user());
             return response()->json($data);
     }
 

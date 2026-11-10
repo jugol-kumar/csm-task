@@ -1,5 +1,5 @@
 <script setup>
-import { shopService } from '@/services/shop.service';
+import { storeService } from '@/services/store.service.js';
 import { useCrudPage } from '@/composables/useCrudPage';
 import PageHeading from '@/components/PageHeading.vue';
 import SearchBar from '@/components/SearchBar.vue';
@@ -23,7 +23,7 @@ const {
     askRemove,
     cancelRemove,
     confirmRemove,
-} = useCrudPage({ list: shopService.list, remove: shopService.remove, noun: 'Shop' });
+} = useCrudPage({ list: storeService.list, remove: storeService.remove, noun: 'Shop' });
 </script>
 
 <template>

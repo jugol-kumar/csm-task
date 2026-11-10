@@ -21,7 +21,7 @@ async function logout() {
 
 <template>
     <div class="flex min-h-screen flex-col bg-white text-slate-700">
-        <header class="border-b border-slate-200 bg-white shadow-sm">
+        <header class="border-b border-slate-200 bg-white">
             <div class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-4">
                 <Logo class="text-slate-900" />
 

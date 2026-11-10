@@ -3,8 +3,7 @@
 namespace App\Services;
 
 use App\Models\Product;
-use App\Models\Shop;
-use App\Models\ShopProduct;
+use App\Models\Store;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
@@ -17,18 +16,17 @@ class OwnerCatalogService
     ) {
     }
 
-    public function createAndList(User $user, Shop $shop, array $data): ShopProduct
+    public function createAndList(User $user, Store $store, array $data)
     {
-        return DB::transaction(function () use ($user, $shop, $data) {
+        return DB::transaction(function () use ($user, $store, $data) {
             $product = $this->products->create($data, $user);
-
-            return $this->listings->attach($shop, $product, ['price' => $data['base_price']]);
+            return $this->listings->attach($store, $product, ['price' => $data['base_price']], $user->id);
         });
     }
 
-    public function deleteOwn(Shop $shop, Product $product): void
+    public function deleteOwn(Store $store, Product $product): void
     {
-        $usedElsewhere = $product->listings()->where('shop_id', '!=', $shop->id)->exists();
+        $usedElsewhere = $product->listings()->where('shop_id', '!=', $store->id)->exists();
 
         if ($usedElsewhere) {
             throw ValidationException::withMessages([

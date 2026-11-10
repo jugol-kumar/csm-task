@@ -23,7 +23,7 @@ class StoreController extends Controller
 
     public function store(StoreRequest $request): JsonResponse
     {
-        $shop = $this->store->create($request->validated(), $request->user());
+        $shop = $this->store->create($request->validated());
         return response()->json($shop);
     }
 

@@ -28,4 +28,9 @@ class Product extends Model
             get: fn ($value) => ImageService::url($value),
         );
     }
+
+    public function listings()
+    {
+        return $this->hasMany(StoreProductMapping::class, 'product_id');
+    }
 }

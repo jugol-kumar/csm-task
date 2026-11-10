@@ -23,13 +23,13 @@ class AuthService
         return [...$user->toArray(), 'token' => $token];
     }
 
-    public function register(array $data): array
+    public function register(array $data)
     {
         return User::create([
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => $data['password'],
-            'role' => Role::$CUSTOMER,
+            'role' => $data['role'] ?? Role::$CUSTOMER,
         ]);
     }
 

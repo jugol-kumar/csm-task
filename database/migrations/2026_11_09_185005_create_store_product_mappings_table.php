@@ -16,11 +16,11 @@ return new class extends Migration
             $table->foreignId('store_id')->constrained('stores');
             $table->foreignId('product_id')->constrained('products');
             $table->foreignId('assign_by')->nullable()->constrained('users');
-            $table->string('name');
-            $table->string('description');
+            $table->string('name')->nullable();
+            $table->string('description')->nullable();
             $table->string('image')->nullable();
-            $table->string('price');
-            $table->date('assign_date');
+            $table->string('price')->nullable();
+            $table->date('assign_date')->nullable();
             $table->timestamps();
         });
     }

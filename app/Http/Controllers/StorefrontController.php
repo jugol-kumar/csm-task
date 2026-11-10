@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreRequest;
 use App\Models\Store;
 use App\Models\StoreProductMapping;
 use App\Services\StorefrontService;
@@ -9,7 +10,7 @@ use Illuminate\Http\Request;
 
 class StorefrontController extends Controller
 {
-    public function __construct(private StorefrontService $store)
+    public function __construct(private readonly StorefrontService $store)
     {
     }
 
@@ -18,9 +19,14 @@ class StorefrontController extends Controller
         return response()->json($this->store->shops($request->query('search', '')));
     }
 
-    public function shop(Store $shop)
+    public function createStore(StoreRequest $request)
     {
-        return response()->json($this->store->shop($shop));
+        return response()->json($this->store->createStore($request->validated()));
+    }
+
+    public function shop(Store $store)
+    {
+        return response()->json($this->store->store($store));
     }
 
     public function products(Request $request, Store $store)
@@ -42,12 +48,10 @@ class StorefrontController extends Controller
         );
     }
 
-    public function product(Store $shop, StoreProductMapping $listing)
+    public function product(Store $store, StoreProductMapping $listing)
     {
-        $visible = $this->store->listing($shop, $listing);
-
+        $visible = $this->store->listing($store, $listing);
         abort_if($visible === null, 404);
-
         return response()->json($visible);
     }
 }

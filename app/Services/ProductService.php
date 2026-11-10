@@ -10,16 +10,21 @@ use Illuminate\Support\Str;
 
 class ProductService
 {
-    public function __construct(private ImageService $images)
+    public function __construct(private readonly ImageService $images)
     {
     }
 
-    public function paginate(?string $search, ?string $source, int $perPage = 10): LengthAwarePaginator
+    public function paginate(?string $search, ?string $source, User $user, int $perPage = 10): LengthAwarePaginator
     {
         return Product::query()
             ->with('creator:id,name')
-             ->when($search, fn ($query) => $query->where('name', 'like', "%{$search}%"))
-            ->when($source, fn ($query) => $query->where('source', $source))
+            ->withCount('listings')
+            ->when($search, fn ($query) => $query->where('name', 'like', "%{$search}%"))
+            ->when($source, fn ($query, $s) =>
+                $s === 'admin'
+                ? $query->where('products.user_id', '=',  $user->id)
+                : $query->where('products.user_id', '!=', $user->id)
+            )
             ->latest('id')
             ->paginate($perPage);
     }

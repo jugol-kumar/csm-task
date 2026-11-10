@@ -7,11 +7,12 @@ use App\Models\Store;
 use App\Models\User;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 class StoreService
 {
-    public function __construct(private ImageService $images)
+    public function __construct(private readonly ImageService $images, private AuthService $authService)
     {
     }
 
@@ -19,21 +20,32 @@ class StoreService
     {
         return Store::query()
             ->with('owner:id,name,email')
-             ->when($search, fn ($query) => $query->where('name', 'like', "%{$search}%"))
+            ->withCount('listings')
+            ->when($search, fn ($query) => $query->where('name', 'like', "%{$search}%"))
             ->latest('id')
             ->paginate($perPage);
     }
 
-    public function create(array $data, User $creator): Store
+    public function create(array $data): Store|bool
     {
-        $shop = Store::create(array_merge(
-             $data,
-            ['user_id' => $creator->id],
-            ['role' => Role::$OWNER],
-            ['slug' => $this->uniqueSlug($data['name'])]
-        ));
+        $user = $this->authService->register([
+            'name' => $data['owner_name'],
+            'email' => $data['owner_email'],
+            'password' => $data['owner_password'],
+            'role' => Role::$OWNER,
+        ]);
 
-        return $shop->load('owner:id,name,email');
+        if($user){
+            $shop = Store::create(array_merge(
+                $data,
+                ['user_id' => $user->id],
+                ['slug' => $this->uniqueSlug($data['name'])]
+            ));
+
+            return $shop->load('owner:id,name,email');
+        }
+
+        return false;
     }
 
     public function update(Store $shop, array $data): Store

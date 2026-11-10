@@ -17,19 +17,19 @@ use Illuminate\Http\Response;
 class CatalogController extends OwnerBaseController
 {
     public function __construct(
-        private ListingService $listings,
-        private ProductService $products,
-        private OwnerCatalogService $catalog
+        private readonly ListingService $listings,
+        private readonly ProductService $products,
+        private readonly OwnerCatalogService $catalog
     ) {
     }
 
-    public function index(Request $request): AnonymousResourceCollection
+    public function index(Request $request)
     {
         $scope = in_array($request->query('scope'), ['available', 'mine'], true)
             ? $request->query('scope')
             : 'all';
 
-        return ProductResource::collection(
+        return response()->json(
             $this->listings->catalog(
                 $this->shop($request),
                 $request->user()->id,
@@ -41,32 +41,30 @@ class CatalogController extends OwnerBaseController
 
     public function store(ProductRequest $request): JsonResponse
     {
+        $user = $request->user();
         $listing = $this->catalog->createAndList(
-            $request->user(),
-            $this->shop($request),
+            $user,
+            $user->store,
             $request->validated()
         );
-
-        return (new ListingResource($listing))->response()->setStatusCode(201);
+        return response()->json($listing);
     }
 
-    public function update(ProductRequest $request, Product $product): ProductResource
+    public function update(ProductRequest $request, Product $product)
     {
         $this->ownProduct($request, $product);
-
-        return new ProductResource($this->products->update($product, $request->validated()));
+        return response()->json($this->products->update($product, $request->validated()));
     }
 
     public function destroy(Request $request, Product $product): Response
     {
         $this->ownProduct($request, $product);
         $this->catalog->deleteOwn($this->shop($request), $product);
-
         return response()->noContent();
     }
 
     private function ownProduct(Request $request, Product $product): void
     {
-        abort_unless($product->created_by === $request->user()->id, 403, 'You can only change products you created.');
+        abort_unless($product->user_id === $request->user()->id, 403, 'You can only change products you created.');
     }
 }
