@@ -11,26 +11,19 @@ const emit = defineEmits(['saved', 'cancel']);
 const toast = useToast();
 const { busy, run, err } = useFormSubmit();
 
-// Current Step: 1 for Owner info, 2 for Shop info
 const currentStep = ref(1);
 
-// Combined Form Data
 const form = reactive({
     owner_name: '',
     owner_email: '',
     owner_password: '',
-    owner_password_confirmation: '',
 
-    // Shop Info
     name: props.shop?.name ?? '',
     description: props.shop?.description ?? '',
-    address: props.shop?.address ?? '',
-    phone: props.shop?.phone ?? '',
     logo: null,
     banner: null,
 });
 
-// File Handlers for Logo & Banner
 function handleLogo(event) {
     form.logo = event.target.files[0] || null;
 }
@@ -39,7 +32,6 @@ function handleBanner(event) {
     form.banner = event.target.files[0] || null;
 }
 
-// Next Step Validation / Action
 function nextStep() {
     currentStep.value = 2;
 }
@@ -94,7 +86,6 @@ async function submit() {
             </div>
         </div>
 
-        <!-- ================= STEP 1: OWNER INFO ================= -->
         <div v-show="currentStep === 1" class="space-y-4">
             <h3 class="font-mono text-xs font-semibold uppercase tracking-wider text-amber-600">Step 1 of 2: Owner Details</h3>
 
@@ -126,7 +117,6 @@ async function submit() {
             </FormField>
         </div>
 
-        <!-- ================= STEP 2: SHOP INFO & MEDIA ================= -->
         <div v-show="currentStep === 2" class="space-y-4">
             <h3 class="font-mono text-xs font-semibold uppercase tracking-wider text-amber-600">Step 2 of 2: Shop Details & Media</h3>
 
@@ -148,26 +138,6 @@ async function submit() {
                 ></textarea>
             </FormField>
 
-            <div class="grid gap-4 sm:grid-cols-2">
-                <FormField label="Address" :error="err('address')">
-                    <input
-                        v-model="form.address"
-                        type="text"
-                        placeholder="123 Street, City"
-                        class="w-full rounded-lg border border-slate-200 bg-white px-3.5 py-2.5 text-slate-800 placeholder-slate-400 shadow-sm transition-colors focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20"
-                    />
-                </FormField>
-                <FormField label="Phone" :error="err('phone')">
-                    <input
-                        v-model="form.phone"
-                        type="text"
-                        placeholder="+1 (555) 000-0000"
-                        class="w-full rounded-lg border border-slate-200 bg-white px-3.5 py-2.5 text-slate-800 placeholder-slate-400 shadow-sm transition-colors focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20"
-                    />
-                </FormField>
-            </div>
-
-            <!-- Logo & Banner File Inputs -->
             <div class="grid gap-4 sm:grid-cols-2 pt-2">
                 <FormField label="Shop Logo" :error="err('logo')">
                     <input
@@ -189,7 +159,6 @@ async function submit() {
             </div>
         </div>
 
-        <!-- ================= FOOTER BUTTONS ================= -->
         <div class="flex items-center justify-between border-t border-slate-200 pt-4">
             <button
                 type="button"

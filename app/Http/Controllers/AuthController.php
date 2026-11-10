@@ -17,7 +17,17 @@ class AuthController extends Controller
     public function login(LoginRequest $request)
     {
         try {
-            $response = $this->authService->login($request->validated(), Role::roles());
+            $response = $this->authService->login($request->validated(), [Role::$OWNER, Role::$CUSTOMER]);
+            return response()->json($response, 200);
+        }catch (\Exception $exception){
+            return response()->json($exception->getMessage(), 500);
+        }
+    }
+
+    public function adminLogin(LoginRequest $request)
+    {
+        try {
+            $response = $this->authService->login($request->validated(), [Role::$ADMIN]);
             return response()->json($response, 200);
         }catch (\Exception $exception){
             return response()->json($exception->getMessage(), 500);

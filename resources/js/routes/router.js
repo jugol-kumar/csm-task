@@ -38,6 +38,10 @@ const routes = [
         ],
     },
     {
+      path:"/admin/login",
+      component: () => import('@/pages/admin/AdminLogin.vue'),
+    },
+    {
         path: '/admin',
         component: () => import('@/layouts/AdminLayout.vue'),
         meta: {roles: ['admin']},
@@ -73,14 +77,6 @@ const routes = [
                     path: 'catalog',
                     component: () => import('@/pages/owner/OwnerCatalogPage.vue'),
                },
-                // {
-                //     path: 'listings',
-                //     component: () => import('@/pages/owner/OwnerListingsPage.vue'),
-                // },
-                // {
-                //     path: 'products/new',
-                //     component: () => import('@/pages/owner/OwnerNewProductPage.vue'),
-                // },
         ],
     },
 ];
