@@ -8,8 +8,12 @@ use App\Models\User;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 
-class UserService
+readonly class UserService
 {
+    public function __construct(private StoreService $storeService)
+    {
+    }
+
     public function paginate(?string $search, int $perPage = 10): LengthAwarePaginator
     {
         return User::query()
@@ -34,7 +38,17 @@ class UserService
                 'role' => $data['role'] ?? Role::$OWNER,
             ]);
 
-            $this->assignShop($user, $data['shop_id'] ?? null);
+            $storeId = $data['shop_id'] ?? null;
+            if(empty($storeId)){
+                $data = [
+                    'name' => $data['new_store']['name'],
+                    'description' => $data['new_store']['description'],
+                ];
+                $store = $this->storeService->createStore($data, $user);
+                $storeId = $store->id;
+            }
+
+            $this->assignShop($user, $storeId?? null);
 
             return $user->load('store:id,user_id,name,slug');
         });

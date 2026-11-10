@@ -34,18 +34,20 @@ class StoreService
             'password' => $data['owner_password'],
             'role' => Role::$OWNER,
         ]);
-
         if($user){
-            $shop = Store::create(array_merge(
-                $data,
-                ['user_id' => $user->id],
-                ['slug' => $this->uniqueSlug($data['name'])]
-            ));
-
-            return $shop->load('owner:id,name,email');
+            return $this->createStore($data, $user);
         }
-
         return false;
+    }
+
+    public function createStore(array $data, User $user)
+    {
+        $shop = Store::create(array_merge(
+            $data,
+            ['user_id' => $user->id],
+            ['slug' => $this->uniqueSlug($data['name'])]
+        ));
+        return $shop->load('owner:id,name,email');
     }
 
     public function update(Store $shop, array $data): Store

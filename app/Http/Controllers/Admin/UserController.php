@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Contract\Role;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\OwnerRequest;
+use App\Http\Requests\UserRequest;
 use App\Models\User;
 use App\Services\UserService;
 use Illuminate\Http\JsonResponse;
@@ -22,7 +22,7 @@ class UserController extends Controller
         return response()->json($this->userService->paginate((string) $request->query('search', '')));
     }
 
-    public function store(OwnerRequest $request): JsonResponse
+    public function store(UserRequest $request): JsonResponse
     {
         $owner = $this->userService->create($request->validated());
         return response()->json($owner);
@@ -34,7 +34,7 @@ class UserController extends Controller
         return response()->json($owner->load('store:id,owner_id,name,slug'));
     }
 
-    public function update(OwnerRequest $request, User $owner)
+    public function update(UserRequest $request, User $owner)
     {
         return response()->json($this->userService->update($owner, $request->validated()));
     }

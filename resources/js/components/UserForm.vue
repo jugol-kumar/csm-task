@@ -21,6 +21,7 @@ const form = reactive({
     create_new_store: false,
     new_store_name: '',
     new_store_slug: '',
+    description: ''
 });
 
 const shops = ref([]);
@@ -53,6 +54,7 @@ async function submit() {
             payload.new_store = {
                 name: form.new_store_name,
                 slug: form.new_store_slug,
+                description: form.description
             };
         } else {
             payload.shop_id = form.shop_id || null;
@@ -168,6 +170,14 @@ async function submit() {
                             required
                         />
                     </div>
+                </FormField>
+                <FormField label="Store Description" :error="err('new_store.description')">
+                    <textarea
+                        v-model="form.description"
+                        rows="3"
+                        class="w-full rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-800 placeholder-slate-400 shadow-sm transition-colors hover:border-slate-300 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20"
+                        placeholder="Briefly describe what this store offers..."
+                    ></textarea>
                 </FormField>
             </div>
         </div>
